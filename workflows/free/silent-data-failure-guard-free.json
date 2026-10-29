@@ -5,7 +5,7 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "f4a9e3be-9b4d-4368-a167-2f0419ba9d80",
+      "id": "78353045-0cef-4b6f-ad40-fcb0e7572dca",
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -18,7 +18,7 @@
       "parameters": {
         "jsCode": "// Example data. Replace this node with your own node (an API call, a database query, a sheet read...).\n// Keep \"Always Output Data\" on (Settings tab of the node), so the Guard also runs when it returns nothing.\nreturn [\n  {\n    \"id\": 1,\n    \"email\": \"ana@example.com\",\n    \"amount\": 120\n  },\n  {\n    \"id\": 2,\n    \"email\": \"ben@example.com\",\n    \"amount\": 75.5\n  },\n  {\n    \"id\": 3,\n    \"email\": \"chen@example.com\",\n    \"amount\": 42\n  }\n].map((json) => ({ json }));\n"
       },
-      "id": "dec3c22d-5c06-4962-9c90-49f636ff5179",
+      "id": "cee366d0-3369-4d4e-a7f8-ac41efb5178a",
       "name": "Your data (example)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -32,7 +32,7 @@
       "parameters": {
         "jsCode": "// ===== Silent Data Failure Guard (Free) v1.0 =====\n// Place this Code node right after the node you want to check.\n// Turn on \"Always Output Data\" on that previous node, so this Guard still runs when it returns nothing.\n// If a check fails, this node throws an error: the execution is marked as failed\n// and your Error Workflow (Workflow settings > Error Workflow) is triggered.\n// If all checks pass, the items go through unchanged.\n//\n// The Free version checks for empty output and one required field.\n// The Pro version adds: any number of required fields, minimum item count,\n// sudden-drop detection, type/format rules, and an alert template for email, Slack and Telegram.\n\n// ----- Settings -----\nconst REQUIRED_FIELD = 'id';  // One field name that every item must have. Dot paths work: customer.email. '' = off\n// ----- End of settings -----\n\nconst PREFIX = '[Silent Data Failure Guard]';\nconst MAX_EXAMPLES = 3;\n\nconst items = $input.all();\nconst isEmptyObject = (j) => !j || (typeof j === 'object' && Object.keys(j).length === 0);\nconst nonEmpty = items.filter((item) => !isEmptyObject(item.json));\nconst count = nonEmpty.length;\nconst ignored = items.length - count;\nconst problems = [];\n\nconst getPath = (obj, path) =>\n  path.split('.').reduce((value, key) => (value == null ? undefined : value[key]), obj);\nconst isBlank = (v) => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');\nconst itemList = (indexes) =>\n  indexes.slice(0, MAX_EXAMPLES).map((i) => `#${i + 1}`).join(', ') + (indexes.length > MAX_EXAMPLES ? ', ...' : '');\n\n// 1. Empty output\nif (count === 0) {\n  problems.push(`Received 0 items` + (ignored > 0 ? ` (${ignored} empty item(s) ignored)` : ''));\n}\n\n// 2. One required field\nconst field = String(REQUIRED_FIELD || '').trim();\nif (field && count > 0) {\n  const missing = [];\n  nonEmpty.forEach((item, i) => {\n    if (isBlank(getPath(item.json, field))) missing.push(i);\n  });\n  if (missing.length > 0) {\n    problems.push(`Field \"${field}\" is missing or empty in ${missing.length} of ${count} item(s) (${itemList(missing)})`);\n  }\n}\n\nif (problems.length > 0) {\n  throw new Error(`${PREFIX} ${problems.join(' | ')}`);\n}\n\nreturn items;\n"
       },
-      "id": "0a9ed82c-8043-4670-ab9b-b2cb4e79d537",
+      "id": "0c651c1f-3e6e-4e49-95b2-cb83a65c0011",
       "name": "Silent Data Failure Guard",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -43,7 +43,7 @@
     },
     {
       "parameters": {},
-      "id": "2fe2bb0a-2528-4866-91f0-1358770b1757",
+      "id": "adf88f1d-c3b1-49fb-a3ad-98ff065dbe79",
       "name": "Continue your workflow",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
@@ -54,12 +54,12 @@
     },
     {
       "parameters": {
-        "content": "## Silent Data Failure Guard (Free)\nFails the run when the data is empty or one required field is missing. Your Error Workflow then sends the alert.\n\n**Requirements**\n- n8n 2.x, built-in nodes only\n- For alerts: an Error Workflow (the kit includes one for email) and a credential for that channel\n\n**Setup**\n1. Click **Execute**: all nodes turn green. Replace the code in \"Your data (example)\" with `return [];` and click **Execute** again: the Guard turns red.\n2. Copy the Guard node into your workflow, right after the node you want to check.\n3. On the node before the Guard, open Settings and turn on **Always Output Data**.\n4. Edit the settings at the top of the Guard code.\n5. Import the alert workflow, set its credential, **Publish** it, and pick it in your workflow under Settings → Error Workflow.\n\n**Limitations**\n- Checks only the data that reaches the Guard; it does not re-read the destination.\n- Alerts are sent only for runs started by a trigger (schedule, webhook...). A run started with the Execute button does not start the Error Workflow.\n- Tested on self-hosted n8n 2.45.5. Other versions and n8n Cloud have not been tested.",
+        "content": "## Silent Data Failure Guard (Free)\nFails the run when the data is empty or one required field is missing. Your Error Workflow then sends the alert.\n\n**Requirements**\n- n8n 2.x, built-in nodes only\n- For alerts: an Error Workflow (the kit includes one for email) and a credential for that channel\n\n**Setup**\n1. Click **Execute**: all nodes turn green. Replace the code in \"Your data (example)\" with `return [];` and click **Execute** again: the Guard turns red.\n2. Copy the Guard node into your workflow, right after the node you want to check.\n3. On the node before the Guard, open Settings and turn on **Always Output Data**.\n4. Set the required field at the top of the Guard code.\n5. Import the alert workflow, set its credential, **Publish** it, and pick it in your workflow under Settings → Error Workflow.\n\n**Limitations**\n- Checks only the data that reaches the Guard; it does not re-read the destination.\n- Alerts are sent only for runs started by a trigger (schedule, webhook...). A run started with the Execute button does not start the Error Workflow.\n- Tested on self-hosted n8n 2.45.5. Other versions and n8n Cloud have not been tested.",
         "width": 480,
         "height": 660,
         "color": 4
       },
-      "id": "a1536af1-b65b-4022-a92c-aa702b42bf79",
+      "id": "9892f4a1-2142-4038-9adb-0bd3b75af464",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -74,7 +74,7 @@
         "width": 260,
         "height": 320
       },
-      "id": "1bd415bb-e3dd-4088-8610-6a683683f579",
+      "id": "b43739ef-4a15-4668-a842-18ac3e388b8c",
       "name": "Note: your data",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
@@ -85,11 +85,11 @@
     },
     {
       "parameters": {
-        "content": "### Silent Data Failure Guard\nSettings are the first lines of the code:\n- `REQUIRED_FIELD`: one field every item must have\n\nAll checks pass: items go through unchanged. A check fails: the node throws an error that names the field and the item numbers.\nThe settings are kept in the code (not in a Set node) so that the Guard stays one node you can paste anywhere.",
+        "content": "### Silent Data Failure Guard\nThe setting is the first line of the code:\n- `REQUIRED_FIELD`: one field every item must have\n\nAll checks pass: items go through unchanged. A check fails: the node throws an error that names the field and the item numbers.\nThe setting is kept in the code (not in a Set node) so that the Guard stays one node you can paste anywhere.",
         "width": 320,
         "height": 300
       },
-      "id": "02df2913-0f06-4e5a-ab6a-942a0e46e575",
+      "id": "387cf66f-73c5-4c0a-a0d8-c26f32685a42",
       "name": "Note: Guard settings",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,

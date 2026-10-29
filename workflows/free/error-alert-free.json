@@ -5,7 +5,7 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "5b9446a3-a8e8-4996-829b-320cdcff211c",
+      "id": "b2b8ef74-218b-4676-811c-7c56d38c8fd4",
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
@@ -18,7 +18,7 @@
       "parameters": {
         "jsCode": "// ===== Error Alert (Free) v1.0 =====\n// Set this workflow as the Error Workflow of the workflows you want to watch\n// (Workflow settings > Error Workflow). It runs whenever one of them fails,\n// including failures raised by Silent Data Failure Guard.\n// Open the \"Send Email\" node and set your SMTP credential and recipient.\n// The Pro version adds Slack and Telegram, and an option to alert only for Guard failures.\n\nconst GUARD_PREFIX = '[Silent Data Failure Guard]';\n\nconst data = $input.first().json;\nconst execution = data.execution || {};\nconst workflow = data.workflow || {};\nconst message = (execution.error && execution.error.message) || 'Unknown error';\nconst isGuardError = message.includes(GUARD_PREFIX);\n\nconst kind = isGuardError ? 'Silent data failure' : 'Workflow error';\nconst subject = `${kind}: ${workflow.name || 'Unknown workflow'}`;\nconst text = [\n  subject,\n  `Node: ${execution.lastNodeExecuted || 'unknown'}`,\n  `Message: ${message}`,\n  execution.url ? `Execution: ${execution.url}` : `Execution ID: ${execution.id || 'unknown'}`,\n  `Time: ${new Date().toISOString()}`,\n].join('\\n');\n\nreturn [{ json: { isGuardError, subject, text } }];\n"
       },
-      "id": "e65279f9-fccf-4eef-b78f-8d88435f7c48",
+      "id": "9f47f495-fa79-4058-a2c1-11a5e2b19abc",
       "name": "Alert message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -36,7 +36,7 @@
         "text": "={{ $json.text }}",
         "options": {}
       },
-      "id": "2675f2eb-78d4-479f-a0d5-fa0a98418e23",
+      "id": "f7a85872-57f3-4f9d-aebf-b84ff075c910",
       "name": "Send Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
@@ -52,7 +52,7 @@
         "height": 520,
         "color": 4
       },
-      "id": "4d91353b-5c92-47f1-8b8f-b14360ee5638",
+      "id": "17f23587-72c9-49f5-b4dc-8dbd1820fd28",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,

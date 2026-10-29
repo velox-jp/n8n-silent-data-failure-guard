@@ -26,17 +26,16 @@ n8n's Error Workflow tells you when a run **crashes**. It does not tell you when
 | `test-data/free/*.json` | The test cases we ran: input items (`runs`) and the expected result (`expect`). To try one, paste its `runs[0]` items into **Your data (example)** as `return [ ... ].map((json) => ({ json }));` |
 | `LICENSE-FREE.md` | License terms |
 
-## Setup (6 steps)
+## Setup (5 steps)
 
-1. In n8n, create a new workflow. Open the **...** menu, choose **Import**, then **From file**, and select `workflows/free/silent-data-failure-guard-free.json`.
-2. Click the **Execute** button at the bottom of the canvas. All nodes turn green.
-3. Copy the node **Silent Data Failure Guard** into your workflow, right after the node you want to check.
-4. Open the node **before** the Guard, go to its **Settings** tab, and turn on **Always Output Data**. Without this, n8n skips the Guard when that node returns nothing, and the run still shows success.
-5. In the Guard's code, set the field every item must have:
+1. In n8n, create a new workflow. Open the **...** menu, choose **Import**, then **From file**, and select `workflows/free/silent-data-failure-guard-free.json`. Click the **Execute** button at the bottom of the canvas: all nodes turn green.
+2. Copy the node **Silent Data Failure Guard** into your workflow, right after the node you want to check.
+3. Open the node **before** the Guard, go to its **Settings** tab, and turn on **Always Output Data**. Without this, n8n skips the Guard when that node returns nothing, and the run still shows success.
+4. In the Guard's code, set the field every item must have:
    ```js
    const REQUIRED_FIELD = 'id';
    ```
-6. For alerts: import `workflows/free/error-alert-free.json`, set the SMTP credential and recipient in **Send Email**, and **Publish** it (n8n asks for a version name; the default is fine). In n8n 2.45.5, an Error Workflow that is not published does not run. Then, in your workflow's **...** → **Settings**, set **Error Workflow (to notify when this one errors)** to **Silent Data Failure Guard (Free) - Error Alert (Email)**.
+5. For alerts: import `workflows/free/error-alert-free.json`, set the SMTP credential and recipient in **Send Email**, and **Publish** it (n8n asks for a version name; the default is fine). In n8n 2.45.5, an Error Workflow that is not published does not run. Then, in your workflow's **...** → **Settings**, set **Error Workflow (to notify when this one errors)** to **Silent Data Failure Guard (Free) - Error Alert (Email)**.
 
 Alerts are sent only for runs started by a trigger (schedule, webhook, and so on). In our check on n8n 2.45.5, a run started with the **Execute** button did not send an alert. Sending the email itself has not been tested (it needs your SMTP credential).
 
@@ -50,8 +49,10 @@ Alerts are sent only for runs started by a trigger (schedule, webhook, and so on
 | Sudden drop vs. the last run | — | ○ |
 | Type and format rules (number, date, email, regular expression...) | — | ○ |
 | Alerts | Email | Email, Slack, Telegram, Guard failures only |
-| Install guide | 6-step setup | Full guide with test steps and 9 troubleshooting cases |
+| Install guide | 5-step setup | Full guide with test steps and 9 troubleshooting cases |
 | Use in client projects | Not allowed | Agency license |
+
+The Pro version is on Gumroad: https://veloxautomation.gumroad.com/l/n8n-silent-data-failure-guard
 
 ## License
 
