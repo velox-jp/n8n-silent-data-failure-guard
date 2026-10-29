@@ -1,0 +1,1 @@
+{"name":"Wrong types (Pro only)","description":"The Free version does not check types, so this data passes. The Pro version would fail it (see pro/07).","runs":[[{"id":1,"amount":"abc","createdAt":"not-a-date"}]],"expect":{"status":"success"}}

@@ -1,0 +1,1 @@
+{"name":"Empty output (0 items)","description":"The previous node returns nothing.","runs":[[]],"expect":{"status":"error","messageIncludes":["Received 0 items","1 empty item(s) ignored"]}}
