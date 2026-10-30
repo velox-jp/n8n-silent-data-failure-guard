@@ -5,9 +5,7 @@
 // and your Error Workflow (Workflow settings > Error Workflow) is triggered.
 // If all checks pass, the items go through unchanged.
 //
-// The Free version checks for empty output and one required field.
-// The Pro version adds: any number of required fields, minimum item count,
-// sudden-drop detection, type/format rules, and an alert template for email, Slack and Telegram.
+// This node checks for empty output and one required field.
 
 // ----- Settings -----
 const REQUIRED_FIELD = 'id';  // One field name that every item must have. Dot paths work: customer.email. '' = off

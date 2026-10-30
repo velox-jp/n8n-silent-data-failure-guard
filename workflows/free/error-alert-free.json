@@ -5,7 +5,7 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "b2b8ef74-218b-4676-811c-7c56d38c8fd4",
+      "id": "68d20268-9320-4e93-afd4-ae33c2653264",
       "name": "Error Trigger",
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
@@ -16,9 +16,9 @@
     },
     {
       "parameters": {
-        "jsCode": "// ===== Error Alert (Free) v1.0 =====\n// Set this workflow as the Error Workflow of the workflows you want to watch\n// (Workflow settings > Error Workflow). It runs whenever one of them fails,\n// including failures raised by Silent Data Failure Guard.\n// Open the \"Send Email\" node and set your SMTP credential and recipient.\n// The Pro version adds Slack and Telegram, and an option to alert only for Guard failures.\n\nconst GUARD_PREFIX = '[Silent Data Failure Guard]';\n\nconst data = $input.first().json;\nconst execution = data.execution || {};\nconst workflow = data.workflow || {};\nconst message = (execution.error && execution.error.message) || 'Unknown error';\nconst isGuardError = message.includes(GUARD_PREFIX);\n\nconst kind = isGuardError ? 'Silent data failure' : 'Workflow error';\nconst subject = `${kind}: ${workflow.name || 'Unknown workflow'}`;\nconst text = [\n  subject,\n  `Node: ${execution.lastNodeExecuted || 'unknown'}`,\n  `Message: ${message}`,\n  execution.url ? `Execution: ${execution.url}` : `Execution ID: ${execution.id || 'unknown'}`,\n  `Time: ${new Date().toISOString()}`,\n].join('\\n');\n\nreturn [{ json: { isGuardError, subject, text } }];\n"
+        "jsCode": "// ===== Error Alert (Free) v1.0 =====\n// Set this workflow as the Error Workflow of the workflows you want to watch\n// (Workflow settings > Error Workflow). It runs whenever one of them fails,\n// including failures raised by Silent Data Failure Guard.\n// Open the \"Send Email\" node and set your SMTP credential and recipient.\n\nconst GUARD_PREFIX = '[Silent Data Failure Guard]';\n\nconst data = $input.first().json;\nconst execution = data.execution || {};\nconst workflow = data.workflow || {};\nconst message = (execution.error && execution.error.message) || 'Unknown error';\nconst isGuardError = message.includes(GUARD_PREFIX);\n\nconst kind = isGuardError ? 'Silent data failure' : 'Workflow error';\nconst subject = `${kind}: ${workflow.name || 'Unknown workflow'}`;\nconst text = [\n  subject,\n  `Node: ${execution.lastNodeExecuted || 'unknown'}`,\n  `Message: ${message}`,\n  execution.url ? `Execution: ${execution.url}` : `Execution ID: ${execution.id || 'unknown'}`,\n  `Time: ${new Date().toISOString()}`,\n].join('\\n');\n\nreturn [{ json: { isGuardError, subject, text } }];\n"
       },
-      "id": "9f47f495-fa79-4058-a2c1-11a5e2b19abc",
+      "id": "526372e1-41b1-41e4-8693-b844e9e887ed",
       "name": "Alert message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -36,7 +36,7 @@
         "text": "={{ $json.text }}",
         "options": {}
       },
-      "id": "f7a85872-57f3-4f9d-aebf-b84ff075c910",
+      "id": "a6e4bc5a-770c-41fe-9eed-bfec0b4c1991",
       "name": "Send Email",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
@@ -52,7 +52,7 @@
         "height": 520,
         "color": 4
       },
-      "id": "17f23587-72c9-49f5-b4dc-8dbd1820fd28",
+      "id": "1fe1e56c-1829-4ea2-8a18-3dc257d0f6f4",
       "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
